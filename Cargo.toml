@@ -1,0 +1,8 @@
+[package]
+name = "dbonk"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.72"
+thiserror = "1.0.44"
