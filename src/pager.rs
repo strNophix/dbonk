@@ -1,9 +1,10 @@
 use std::{
     fs::{File, OpenOptions},
     os::unix::prelude::FileExt,
+    path::Path,
 };
 
-use crate::layout::*;
+use crate::{cursor::Position, layout::*};
 use anyhow::Result;
 use thiserror::Error;
 
@@ -23,7 +24,7 @@ pub struct Pager {
 }
 
 impl Pager {
-    pub fn new(file_path: &str) -> Result<Self> {
+    pub fn new<T: AsRef<Path>>(file_path: T) -> Result<Self> {
         let file = OpenOptions::new()
             .read(true)
             .write(true)
