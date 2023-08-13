@@ -1,12 +1,11 @@
 use crate::{
+    cursor::Cursor,
     layout::{ROW_SIZE, TABLE_MAX_ROWS},
     row::{Row, RowBytes},
     table::Table,
 };
 use anyhow::Result;
 use thiserror::Error;
-
-type FilteredRows = Vec<Row>;
 
 #[derive(Debug)]
 pub enum StatementType {
@@ -73,22 +72,25 @@ pub fn execute_insert(row: Row, table: &mut Table) -> Result<()> {
         return Err(ExecutionError::TableFull.into());
     }
 
+    let cursor = Cursor::at_table_end(table);
     let bytes: RowBytes = row.into();
-    let (page_num, offset) = table.row_slot(table.row_count);
+
+    let (page_num, offset) = cursor.position();
     let page = table.pager.page(page_num)?;
-    // let page = table.pager.pages[page_num].as_mut().unwrap();
     page[offset..offset + ROW_SIZE].copy_from_slice(&bytes);
     table.row_count += 1;
     Ok(())
 }
 
-pub fn execute_select(table: &mut Table) -> Result<FilteredRows> {
-    let mut rows: FilteredRows = vec![];
-    for i in 0..table.row_count {
-        let (page_num, offset) = table.row_slot(i);
-        let page = table.pager.page(page_num)?;
+pub fn execute_select(table: &mut Table) -> Result<Vec<Row>> {
+    let mut rows: Vec<Row> = vec![];
+    let mut cursor = Cursor::at_table_start(table);
+    while !cursor.end_of_table {
+        let (page_num, offset) = cursor.position();
+        let page = cursor.table.pager.page(page_num)?;
         let row: RowBytes = page[offset..offset + ROW_SIZE].try_into()?;
         rows.push(row.into());
+        cursor.advance();
     }
 
     Ok(rows)
