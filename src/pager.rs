@@ -42,7 +42,7 @@ impl Pager {
         metadata.len() as usize
     }
 
-    pub fn row_location(&self, row_num: usize) -> (usize, usize) {
+    pub fn row_location(&self, row_num: usize) -> Position {
         let page_num = row_num / ROWS_PER_PAGE;
         let row_offset = row_num % ROWS_PER_PAGE;
         let byte_offset = row_offset * ROW_SIZE;

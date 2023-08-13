@@ -1,4 +1,4 @@
-use crate::{layout::*, pager::Pager};
+use crate::{cursor::Position, layout::*, pager::Pager};
 
 pub struct Table {
     pub row_count: usize,
@@ -11,7 +11,7 @@ impl Table {
         Self { row_count, pager }
     }
 
-    pub fn row_slot(&self, index: usize) -> (usize, usize) {
+    pub fn row_slot(&self, index: usize) -> Position {
         self.pager.row_location(index)
     }
 
