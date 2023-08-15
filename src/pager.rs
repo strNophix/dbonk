@@ -62,12 +62,12 @@ impl Pager {
                 num_pages += 1
             }
 
+            let mut page: Page = [0; PAGE_SIZE];
             if page_num <= num_pages {
-                let mut page: Page = [0; PAGE_SIZE];
                 let offset: u64 = (page_num * PAGE_SIZE).try_into()?;
                 self.file.read_at(&mut page, offset)?;
-                self.pages[page_num] = Some(page);
             }
+            self.pages[page_num] = Some(page);
         }
 
         Ok(self.pages[page_num].as_mut().unwrap())
