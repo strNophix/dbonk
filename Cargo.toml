@@ -6,3 +6,6 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.72"
 thiserror = "1.0.44"
+
+[dev-dependencies]
+tempfile = "3.7.1"
